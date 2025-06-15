@@ -1,0 +1,21 @@
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def generate_response(chat_history, user_input):
+    messages = [{"role": "system", "content": "You are a helpful and safe medical assistant."}]
+    messages.extend(chat_history)
+    messages.append({"role": "user", "content": user_input})
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=messages,
+        temperature=0.5
+    )
+
+    reply = response['choices'][0]['message']['content']
+    messages.append({"role": "assistant", "content": reply})
+    return reply, messages[1:]  # return new response and updated history
